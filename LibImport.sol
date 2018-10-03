@@ -2,30 +2,30 @@ pragma solidity ^0.4.22;
 
 library UserLib{
     
-    struct DataStorage {
+    struct UserID {
         mapping(address => bool) address_status;
     }
     
-    function userAddressExists(address _self, DataStorage storage _dataStorage) constant returns (bool){
-        return _dataStorage.address_status[_self];
+    function userAddressExists(address _self, UserID storage _userID) constant returns (bool){
+        return _userID.address_status[_self];
     }
     
-    function setUserAddress(address _self, DataStorage storage _dataStorage) public {
-        _dataStorage.address_status[_self] = true;
+    function setUserAddress(address _self, UserID storage _userID) public {
+        _userID.address_status[_self] = true;
     }
     
 }
 
 contract UserContract{
-    UserLib.DataStorage contractStorage;
+    UserLib.UserID userInstance;
     
     using UserLib for address;
     
     function checkUserAddressExistence() constant returns (bool){
-        return msg.sender.userAddressExists(contractStorage);
+        return msg.sender.userAddressExists(userInstance);
     }
     
-    function registerMe() public{
-        msg.sender.setUserAddress(contractStorage);
+    function registerMe() public {
+        msg.sender.setUserAddress(userInstance);
     }
 }
