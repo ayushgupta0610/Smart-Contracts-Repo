@@ -2,7 +2,7 @@ pragma solidity ^0.4.25;
 
 library UserLib{
 
-    // You can define sny complex you think would solve your purpose, for demo pupose I have tried to keep it simple
+    // You can define any complex struct you think would solve your purpose, for demo pupose I have tried to keep it simple
     struct DataStorage{
         mapping(bytes32 => string) bytes_string;
         mapping(string => string) string_string;
@@ -41,8 +41,8 @@ contract UserContract{
     using UserLib for bytes32;
     using UserLib for string;
 
-    function getStoredBytes(bytes32 _bytesValues) public constant returns(string){
-        return _bytesValues.getBytesStorage(dataStorageInstance);
+    function getStoredBytes(bytes32 _bytesKey) public constant returns(string){
+        return _bytesKey.getBytesStorage(dataStorageInstance);
     }
 
     function saveBytes(bytes32 _bytesKey, string _stringValue) public returns(bool){
@@ -50,8 +50,8 @@ contract UserContract{
         return true;
     }
 
-    function getStoredString(string _stringValue) public constant returns(string){
-        return _stringValue.getStringStorage(dataStorageInstance);
+    function getStoredString(string _stringKey) public constant returns(string){
+        return _stringKey.getStringStorage(dataStorageInstance);
     }
 
     function saveString(string _stringKey, string _stringValue) public returns(bool){
@@ -59,6 +59,32 @@ contract UserContract{
         return true;
     }
 
-    
+}
 
+contract SimpleContract{
+    
+    struct DataStorage{
+        mapping(bytes32 => string) bytes_string;
+        mapping(string => string) string_string;
+    }
+    DataStorage dataStorage;
+    
+    function getStoredBytes(bytes32 _bytesKey) public constant returns(string){
+        return dataStorage.bytes_string[_bytesKey];
+    }
+
+    function saveBytes(bytes32 _bytesKey, string _stringValue) public returns(bool){
+        dataStorage.bytes_string[_bytesKey] = _stringValue;
+        return true;
+    }
+
+    function getStoredString(string _stringKey) public constant returns(string){
+        return dataStorage.string_string[_stringKey];
+    }
+
+    function saveString(string _stringKey, string _stringValue) public returns(bool){
+        dataStorage.string_string[_stringKey] = _stringValue;
+        return true;
+    }
+    
 }
